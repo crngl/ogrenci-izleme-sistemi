@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Öğrenci İzleme Sistemi</title>
+    <script>
+      (function () {
+        var localHost = /^(localhost|127\.0\.0\.1)$/i.test(location.hostname);
+        if (!localHost && location.protocol === "http:") {
+          location.replace("https:" + location.href.slice(location.protocol.length));
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          var appearance = JSON.parse(localStorage.getItem("ois-public-appearance") || "{}");
+          var savedTheme = appearance.theme || localStorage.getItem("ois-public-theme");
+          var theme = savedTheme === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : savedTheme;
+          if (theme === "dark") {
+            document.documentElement.dataset.theme = "dark";
+            document.documentElement.classList.add("theme-dark");
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css?v=20261026-demo1" />
+  </head>
+  <body class="auth-locked">
+    <script>
+      (function () {
+        try {
+          var appearance = JSON.parse(localStorage.getItem("ois-public-appearance") || "{}");
+          var savedTheme = appearance.theme || localStorage.getItem("ois-public-theme");
+          var theme = savedTheme === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : savedTheme;
+          if (theme === "dark") {
+            document.body.dataset.theme = "dark";
+            document.body.classList.add("theme-dark");
+          }
+        } catch (error) {}
+      })();
+    </script>
+    <div id="authGate" class="auth-gate">
+      <section class="auth-card auth-landing-card">
+        <header class="auth-site-top">
+          <div class="auth-site-brand">
+            <span class="brand-mark mini">Öİ</span>
+            <strong>Öğrenci İzleme Sistemi</strong>
+          </div>
+          <div class="auth-site-actions">
+            <a class="ghost" href="?login=1">Giriş</a>
+            <a class="primary" href="?login=1">Kayıt ol</a>
+          </div>
+        </header>
+        <div class="auth-landing">
+          <div class="auth-hero">
+            <span class="eyebrow">Merkezi okul sistemi</span>
+            <h1>Öğrenci İzleme Sistemi</h1>
+            <p>Öğrenci dosyası, sınav, rehberlik, devamsızlık ve planlama kayıtları okul bazında güvenli tutulur.</p>
+          </div>
+          <div class="auth-box auth-box-home">
+            <div class="auth-intro-panel">
+              <span class="eyebrow">Okul verisi tek merkezde</span>
+              <h3>Rehberlik, sınav ve öğrenci takibini aynı ekranda yönetin.</h3>
+              <p>Devam etmek için sağ üstten giriş yapın veya okul zip koduyla kayıt başvurusu oluşturun.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" id="brandMark">Öİ</div>
+          <div>
+            <h1 id="brandTitle">Öğrenci İzleme Sistemi</h1>
+            <p id="brandSubtitle">Rehberlik ve sınıf takip paneli</p>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Ana menü">
+          <button class="nav-item active" data-view="dashboard">
+            <span class="nav-icon">AP</span>
+            Ana Panel
+          </button>
+          <button class="nav-item" data-view="dossier">
+            <span class="nav-icon">ÖD</span>
+            Öğrenci Dosyası
+          </button>
+          <button class="nav-item" data-view="risk">
+            <span class="nav-icon">RH</span>
+            Risk Haritası
+          </button>
+          <button class="nav-item" data-view="forms">
+            <span class="nav-icon">FA</span>
+            Form Aktarma
+          </button>
+          <button class="nav-item" data-view="exams">
+            <span class="nav-icon">SN</span>
+            Sınavlar
+          </button>
+          <button class="nav-item" data-view="attendance">
+            <span class="nav-icon">DV</span>
+            Devamsızlık
+          </button>
+          <button class="nav-item" data-view="discipline">
+            <span class="nav-icon">DS</span>
+            Disiplin
+          </button>
+          <button class="nav-item" data-view="honor">
+            <span class="nav-icon">OY</span>
+            Onur/Yetenek
+          </button>
+          <button class="nav-item" data-view="alumni">
+            <span class="nav-icon">MZ</span>
+            Mezun İzleri
+          </button>
+          <button class="nav-item" data-view="parentNetwork">
+            <span class="nav-icon">DA</span>
+            Okul Destek Ağı
+          </button>
+          <button class="nav-item" data-view="planning">
+            <span class="nav-icon">PL</span>
+            Planlama
+          </button>
+          <button class="nav-item" data-view="reports">
+            <span class="nav-icon">RP</span>
+            Raporlar
+          </button>
+          <button class="nav-item nav-settings" data-view="settings">
+            <span class="nav-icon">AY</span>
+            Ayarlar
+          </button>
+        </nav>
+
+        <section class="class-picker">
+          <label for="gradeSelect">Kademe</label>
+          <select id="gradeSelect">
+            <option value="9">9. sınıf</option>
+            <option value="10">10. sınıf</option>
+            <option value="11">11. sınıf</option>
+            <option value="12">12. sınıf</option>
+          </select>
+          <label for="branchSelect">Sınıf / Alan</label>
+          <select id="branchSelect">
+            <option value="9-A">9-A</option>
+            <option value="9-B">9-B</option>
+          </select>
+          <button id="addStudentBtn" class="primary wide">Yeni öğrenci</button>
+        </section>
+
+        <button class="nav-item sidebar-settings-shortcut" data-view="settings">
+          <span class="nav-icon">AY</span>
+          Ayarlar
+        </button>
+
+        <details class="school-settings">
+          <summary>Okul bilgisi</summary>
+          <label>Okul adı<input id="schoolNameInput" placeholder="Okul adı" /></label>
+          <label>Kısa ad / logo yazısı<input id="schoolShortInput" maxlength="16" placeholder="Örn. 15TEMMUZAL" /></label>
+          <label>Logo yükle<input id="schoolLogoInput" type="file" accept=".png,.jpg,.jpeg,.webp,.svg" /></label>
+          <button id="saveSchoolBtn" class="ghost wide" type="button">Okul bilgisini kaydet</button>
+          <div class="backup-actions">
+            <button id="exportBackupBtn" class="ghost wide" type="button">Yedek indir</button>
+            <label class="backup-upload">Yedekten yükle<input id="importBackupInput" type="file" accept=".json" /></label>
+          </div>
+        </details>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Rehberlik yönetim paneli</p>
+            <h2 id="viewTitle">Ana Panel</h2>
+          </div>
+          <div class="top-actions">
+            <span id="activeClassBadge" class="badge"></span>
+            <button id="saveBtn" class="ghost">Kaydet</button>
+            <button id="logoutBtn" class="ghost" type="button">Çıkış yap</button>
+          </div>
+        </header>
+
+        <section id="dashboardView" class="view active"></section>
+        <section id="studentsView" class="view"></section>
+        <section id="dossierView" class="view"></section>
+        <section id="riskView" class="view"></section>
+        <section id="formsView" class="view"></section>
+        <section id="examsView" class="view"></section>
+        <section id="attendanceView" class="view"></section>
+        <section id="disciplineView" class="view"></section>
+        <section id="honorView" class="view"></section>
+        <section id="alumniView" class="view"></section>
+        <section id="parentNetworkView" class="view"></section>
+        <section id="planningView" class="view"></section>
+        <section id="reportsView" class="view"></section>
+        <section id="settingsView" class="view">
+          <div class="content-grid">
+            <article class="panel span-6">
+              <div class="section-title">
+                <div>
+                  <h3>Okul kimliği</h3>
+                  <p>Sol üstte görünen okul adı, logo yazısı ve görsel logo.</p>
+                </div>
+              </div>
+              <div class="settings-form">
+                <label>Okul adı<input id="settingsSchoolNameInput" placeholder="Okul adı" /></label>
+                <label>Alt başlık<input id="settingsSchoolSubtitleInput" placeholder="Rehberlik ve sınıf takip paneli" /></label>
+                <label>Kısa ad / logo yazısı<input id="settingsSchoolShortInput" maxlength="10" placeholder="Örn. 15TEMMUZ" /></label>
+                <label>Logo yükle<input id="settingsSchoolLogoInput" type="file" accept=".png,.jpg,.jpeg,.webp,.svg" /></label>
+                <div class="draft-actions">
+                  <button id="settingsSaveSchoolBtn" class="primary" type="button">Okul bilgisini kaydet</button>
+                  <button id="settingsRemoveLogoBtn" class="ghost" type="button">Logoyu kaldır</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel span-12">
+              <div class="section-title">
+                <div>
+                  <h3>Canlı veritabanı</h3>
+                  <p>Supabase ana veri kaynağıdır; bilgisayar ve telefon aynı okul verisini buradan okur.</p>
+                </div>
+                <span id="cloudStatusBadge" class="status">Kontrol bekliyor</span>
+              </div>
+              <div class="settings-form">
+                <label>Supabase URL<input id="cloudSupabaseUrlInput" placeholder="https://...supabase.co" /></label>
+                <label>Anon public key<input id="cloudSupabaseAnonKeyInput" placeholder="sb_publishable_..." /></label>
+                <label>Instance<input id="cloudInstanceIdInput" placeholder="main" /></label>
+                <label class="toggle-line"><input id="cloudRealtimeInput" type="checkbox" checked /> Canlı eşitleme açık</label>
+                <div class="draft-actions field-wide">
+                  <button id="cloudSaveBtn" class="primary" type="button">Bağlantıyı kaydet</button>
+                  <button id="cloudPushBtn" class="danger" type="button">Bu cihazdaki veriyi ana veritabanına gönder</button>
+                  <button id="cloudPullBtn" class="ghost" type="button">Buluttan yenile</button>
+                </div>
+                <div id="cloudStatusText" class="exam-import-status field-wide" data-tone="info">Bulut durumu kontrol edilecek.</div>
+              </div>
+            </article>
+
+            <article class="panel span-6">
+              <div class="section-title">
+                <div>
+                  <h3>Uygulama görünümü</h3>
+                  <p>Dil, koyu renk, açılış ekranı ve gizlilik tercihleri.</p>
+                </div>
+              </div>
+              <div class="settings-form">
+                <label>Dil
+                  <select id="languageSelect">
+                    <option value="tr">Türkçe</option>
+                    <option value="en">English</option>
+                  </select>
+                </label>
+                <label>Tema
+                  <select id="themeSelect">
+                    <option value="light">Açık</option>
+                    <option value="dark">Koyu</option>
+                    <option value="system">Sistemle aynı</option>
+                  </select>
+                </label>
+                <label>Açılış ekranı
+                  <select id="defaultViewSelect">
+                    <option value="dashboard">Ana Panel</option>
+                    <option value="dossier">Öğrenci Dosyası</option>
+                    <option value="forms">Form Aktarma</option>
+                    <option value="exams">Sınavlar</option>
+                    <option value="attendance">Devamsızlık</option>
+                    <option value="discipline">Disiplin</option>
+                    <option value="honor">Onur/Yetenek</option>
+                    <option value="alumni">Mezun İzleri</option>
+                    <option value="parentNetwork">Okul Destek Ağı</option>
+                    <option value="planning">Planlama</option>
+                    <option value="reports">Raporlar</option>
+                  </select>
+                </label>
+                <label class="toggle-line"><input id="compactTablesInput" type="checkbox" /> Kompakt tablo görünümü</label>
+                <label class="toggle-line"><input id="privacyModeInput" type="checkbox" /> Gizlilik modu: detay alanlarını bulanıklaştır</label>
+                <button id="saveAppearanceBtn" class="primary field-wide" type="button">Görünümü kaydet</button>
+              </div>
+            </article>
+
+            <article class="panel span-12">
+              <div class="section-title">
+                <div>
+                  <h3>Güvenlik özeti</h3>
+                  <p>Aktif oturum, okul kapsamı ve veri ayrımı burada kontrol edilir.</p>
+                </div>
+              </div>
+              <div id="securitySummary" class="security-summary"></div>
+            </article>
+
+            <article class="panel span-12">
+              <div class="section-title">
+                <div>
+                  <h3>Veri ve yedek</h3>
+                  <p>Veriler merkezi sunucu veritabanında saklanır; ayrıca dosya olarak yedekleyebilirsin.</p>
+                </div>
+              </div>
+              <div class="settings-actions">
+                <button id="settingsExportBackupBtn" class="ghost" type="button">Yedek indir</button>
+                <label class="backup-upload light">Yedekten yükle<input id="settingsImportBackupInput" type="file" accept=".json" /></label>
+                <button id="clearLocalDataBtn" class="danger" type="button">Yerel veriyi sıfırla</button>
+              </div>
+            </article>
+            <article class="panel span-12" id="memberManagementPanel"></article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="studentDialog" class="modal">
+      <form method="dialog" id="studentForm">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Öğrenci kartı</p>
+            <h3 id="studentDialogTitle">Yeni Öğrenci</h3>
+          </div>
+          <button type="button" class="icon-button" value="cancel" aria-label="Kapat">×</button>
+        </div>
+
+        <section class="student-import-box">
+          <div>
+            <strong>Belgeden öğrenci bilgisi doldur</strong>
+            <p>Öğrenci tanıma formu, PDF, Excel, fotoğraf/görsel veya Word belgesini seçip form alanlarına aktar.</p>
+          </div>
+          <div class="student-import-controls">
+            <input id="studentDocInput" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,.xlsx,.xls,.doc,.docx,.txt,.csv,image/*" />
+            <label class="camera-upload">
+              Fotoğraf çek / yükle
+              <input id="studentCameraInput" type="file" accept="image/*" capture="environment" />
+            </label>
+            <button type="button" class="ghost" id="readStudentDocumentBtn">Belgeyi oku</button>
+          </div>
+          <div id="studentImportPreview" class="student-import-preview">Henüz belge seçilmedi.</div>
+        </section>
+
+        <div id="studentFormSections" class="student-form-sections"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="ghost" id="cancelStudentBtn">Vazgeç</button>
+          <button type="submit" class="primary" id="submitStudent">Kaydet</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./vendor/purify.min.js"></script>
+    <script src="./security.js?v=20261026-security1"></script>
+    <script src="./vendor/xlsx.full.min.js"></script>
+    <script src="./vendor/jszip.min.js"></script>
+    <script src="./vendor/mammoth.browser.min.js"></script>
+    <script src="./pdf-loader.js"></script>
+    <script src="./vendor/tesseract.min.js"></script>
+    <script src="./vendor/supabase.min.js"></script>
+    <script src="./cloud-config.js?v=20261026-public1"></script>
+  <script src="./app.js?v=20261026-security1"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+cloud-config.local.js
+data/
+work/
+tmp/
+*.zip
+*.log
+test-results/
+*.docx
+*.pdf
+*backup*
+*yedek*
